@@ -1,0 +1,16 @@
+[
+{
+  "modid": "gt6orehelper",
+  "name": "GT6 Ore Helper",
+  "description": "NEI info of GregTech 6 ores. Shows also ore info in dimensions from other mods (Twilight Forest, Erebus, The Betweenlands, The Aether, Galacticraft, etc)",
+  "version": "${version}",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Zuxelus"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

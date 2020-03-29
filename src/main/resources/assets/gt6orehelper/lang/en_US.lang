@@ -1,0 +1,35 @@
+# General
+gt6orehelper.nei.worldgen.name=World Generation
+gt6orehelper.nei.oreName=Ore Name
+gt6orehelper.nei.stone=Stone
+gt6orehelper.nei.stoneTop=Stone Top
+gt6orehelper.nei.stoneBottom=Stone Bottom
+gt6orehelper.nei.top=Top
+gt6orehelper.nei.bottom=Bottom
+gt6orehelper.nei.between=Between
+gt6orehelper.nei.spread=Spread
+gt6orehelper.nei.height=Height
+gt6orehelper.nei.probability=Probability
+gt6orehelper.nei.amount=Amount
+gt6orehelper.nei.worlds=Worlds
+gt6orehelper.nei.chance=Chance
+gt6orehelper.nei.biomes=Biomes
+gt6orehelper.nei.bedrockOre=Bedrock Ore
+gt6orehelper.nei.smallOre=Small Ore
+gt6orehelper.nei.largeOre=Large Ore
+gt6orehelper.nei.oreLayer=Ore Layer
+gt6orehelper.nei.oreLayerBetween=Ore Layer Between
+
+
+# Worlds
+gt6orehelper.world.overworld.name=Over
+gt6orehelper.world.nether.name=Neth
+gt6orehelper.world.end.name=End
+gt6orehelper.world.twilight.name=Twil
+gt6orehelper.world.betweenlands.name=Betw
+gt6orehelper.world.moon.name=Moon
+gt6orehelper.world.mars.name=Mars
+gt6orehelper.world.planets.name=Plan
+gt6orehelper.world.asteroids.name=Astr
+gt6orehelper.world.aether.name=Aeth
+gt6orehelper.world.erebus.name=Ereb
