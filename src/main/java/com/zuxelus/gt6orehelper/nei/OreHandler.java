@@ -157,12 +157,20 @@ public class OreHandler extends TemplateRecipeHandler {
 		} else if (unlocalizedName.equals("gt.block.diggable.2")) {
 			BlockWrapper worldgen = OreHelper.mapBlockWrapper.get("swamp.turf");
 			arecipes.add(new CachedOreRecipe(worldgen.name, worldgen.block, 5));
+		} else if (unlocalizedName.startsWith("gt.block.flower")) {
+			short meta = (short) result.getItemDamage();
+			for (OreBedrockWrapper worldgen : OreHelper.mapOreBedrockWrapper.values()) {
+				if (meta == worldgen.flowerMeta && unlocalizedName.startsWith(worldgen.flower.getUnlocalizedName())) {
+					arecipes.add(new CachedOreRecipe(worldgen.name + worldgen.material.mNameInternal,
+							ST.make((Block) BlocksGT.oreBedrock, 1, worldgen.material.mID),
+							ST.make(worldgen.flower, 1, worldgen.flowerMeta), 0, 0));
+				}
+			}
 		} else
 			super.loadCraftingRecipes(result);
 	}
-	
-	public void AddDimRecipes(int dim)
-	{
+
+	private void AddDimRecipes(int dim) {
 		for (OreSmallWrapper worldgen : OreHelper.mapOreSmallWrapper.values()) {
 			if (worldgen.getWorlds().indexOf(OreHelper.getWorldNameTranslated(dim)) > -1) {
 				arecipes.add(new CachedOreRecipe(worldgen.name,
@@ -211,7 +219,7 @@ public class OreHandler extends TemplateRecipeHandler {
 		}
 	}
 
-	public void drawBedrockExtras(OreBedrockWrapper oreLayer) {
+	private void drawBedrockExtras(OreBedrockWrapper oreLayer) {
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.bedrockOre"), 2, 22, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.oreName") + ": " + oreLayer.materialName, 2, 44, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.height") + ": " + "0-6", 2, 56, 0x404040, false);
@@ -222,7 +230,7 @@ public class OreHandler extends TemplateRecipeHandler {
 			GuiDraw.drawString(oreLayer.getWorlds(), 4, 104, 0x404040, false);
 	}
 
-	public void drawSmallExtras(OreSmallWrapper oreLayer) {
+	private void drawSmallExtras(OreSmallWrapper oreLayer) {
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.smallOre"), 2, 22, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.oreName") + ": " + oreLayer.materialName, 2, 44, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.height") + ": " + oreLayer.worldGenHeightRange, 2, 56, 0x404040, false);
@@ -233,7 +241,7 @@ public class OreHandler extends TemplateRecipeHandler {
 			GuiDraw.drawString(worlds, 4, 104, 0x404040, false);
 	}
 
-	public void drawLargeExtras(OreLargeWrapper oreLayer) {
+	private void drawLargeExtras(OreLargeWrapper oreLayer) {
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.largeOre"), 2, 22, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.height") + ": " + oreLayer.worldGenHeightRange, 2, 44, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.top") + ": " + oreLayer.materialName, 2, 56, 0x404040, false);
@@ -243,8 +251,7 @@ public class OreHandler extends TemplateRecipeHandler {
 		String worlds = oreLayer.getWorlds();
 		if (worlds.length() > 32) {
 			int index = worlds.indexOf(",", 20);
-			if (index > -1)
-			{
+			if (index > -1) {
 				GuiDraw.drawString(I18n.format("gt6orehelper.nei.worlds") + ": " + worlds.substring(0, index + 1), 2, 104, 0x404040, false);
 				GuiDraw.drawString(worlds.substring(index + 2), 4, 116, 0x404040, false);
 				return;
@@ -254,7 +261,7 @@ public class OreHandler extends TemplateRecipeHandler {
 		GuiDraw.drawString(worlds, 4, 116, 0x404040, false);
 	}
 
-	public void drawOreLayerExtras(OreLayerWrapper oreLayer) {
+	private void drawOreLayerExtras(OreLayerWrapper oreLayer) {
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.oreLayer"), 2, 22, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.stone") + ": " + oreLayer.stoneMaterialName, 2, 44, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.oreName") + ": " + oreLayer.materialName, 2, 56, 0x404040, false);
@@ -266,7 +273,7 @@ public class OreHandler extends TemplateRecipeHandler {
 			GuiDraw.drawString(worlds, 4, 104, 0x404040, false);
 	}
 
-	public void drawOre2LayerExtras(Ore2LayerWrapper oreLayer) {
+	private void drawOre2LayerExtras(Ore2LayerWrapper oreLayer) {
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.oreLayerBetween"), 2, 22, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.stoneTop") + ": " + oreLayer.stoneMaterialName, 2, 44, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.stoneBottom") + ": " + oreLayer.stone2MaterialName, 2, 56, 0x404040, false);
@@ -276,8 +283,8 @@ public class OreHandler extends TemplateRecipeHandler {
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.biomes") + ": ", 2, 104, 0x404040, false);
 		GuiDraw.drawString(oreLayer.getWorlds(), 4, 116, 0x404040, false);
 	}
-	
-	public void drawBlockExtras(BlockWrapper oreLayer) {
+
+	private void drawBlockExtras(BlockWrapper oreLayer) {
 		GuiDraw.drawString(oreLayer.block.getDisplayName(), 2, 22, 0x404040, false);
 		GuiDraw.drawString(I18n.format("gt6orehelper.nei.height") + ": ", 2, 44, 0x404040, false);
 		GuiDraw.drawString(oreLayer.worldGenHeightRange, 2, 56, 0x404040, false);
@@ -288,13 +295,11 @@ public class OreHandler extends TemplateRecipeHandler {
 		if (!drawWorldList(worlds, 30))
 			GuiDraw.drawString(worlds, 4, 104, 0x404040, false);
 	}
-	
-	public boolean drawWorldList(String worlds, int length)
-	{
+
+	private boolean drawWorldList(String worlds, int length) {
 		if (worlds.length() > length + 2) {
 			int index = worlds.indexOf(",", length);
-			if (index > -1)
-			{
+			if (index > -1) {
 				GuiDraw.drawString(worlds.substring(0, index + 1), 4, 104, 0x404040, false);
 				GuiDraw.drawString(worlds.substring(index + 2), 4, 116, 0x404040, false);
 				return true;

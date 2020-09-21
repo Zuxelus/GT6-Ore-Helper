@@ -1,10 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-		maven {
-			name = "gt"
-			url = "https://gregtech.overminddl1.com/"
-		}
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -16,15 +12,19 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'com.gregoriust.gregtech:gregtech_1.7.10:SNAPSHOT:dev'
     }
 }
 
 apply plugin: 'forge'
 
-version = "1.7.10-0.0.1"
+version = "1.7.10-0.0.2"
 group= "com.zuxelus.gt6orehelper" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "GT6OreHelper"
+
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
 
 minecraft {
     version = "1.7.10-10.13.4.1614-1.7.10"
@@ -35,7 +35,7 @@ minecraft {
 }
 
 dependencies {
-	compile "com.gregoriust.gregtech:gregtech_1.7.10:SNAPSHOT:dev"
+	compile files("libs/gregtech_1.7.10-6.14.01-dev.jar")
 }
 
 processResources {
