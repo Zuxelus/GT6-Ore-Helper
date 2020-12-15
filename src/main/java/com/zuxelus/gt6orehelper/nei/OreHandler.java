@@ -52,7 +52,8 @@ public class OreHandler extends TemplateRecipeHandler {
 		public CachedOreRecipe(String name, ItemStack ore, ItemStack flower, int type, int num) {
 			this(name, ore, type);
 			this.number = num;
-			input.add(new PositionedStack(flower, 24, 1));
+			if (flower != null)
+				input.add(new PositionedStack(flower, 24, 1));
 		}
 
 		public CachedOreRecipe(String name, ItemStack ore, ItemStack top, ItemStack bottom, int type, int num) {
@@ -160,7 +161,7 @@ public class OreHandler extends TemplateRecipeHandler {
 		} else if (unlocalizedName.startsWith("gt.block.flower")) {
 			short meta = (short) result.getItemDamage();
 			for (OreBedrockWrapper worldgen : OreHelper.mapOreBedrockWrapper.values()) {
-				if (meta == worldgen.flowerMeta && unlocalizedName.startsWith(worldgen.flower.getUnlocalizedName())) {
+				if (worldgen.flower != null && meta == worldgen.flowerMeta && unlocalizedName.startsWith(worldgen.flower.getUnlocalizedName())) {
 					arecipes.add(new CachedOreRecipe(worldgen.name + worldgen.material.mNameInternal,
 							ST.make((Block) BlocksGT.oreBedrock, 1, worldgen.material.mID),
 							ST.make(worldgen.flower, 1, worldgen.flowerMeta), 0, 0));
