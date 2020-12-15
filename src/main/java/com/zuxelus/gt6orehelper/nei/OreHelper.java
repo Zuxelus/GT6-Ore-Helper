@@ -3,10 +3,11 @@ package com.zuxelus.gt6orehelper.nei;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
-import gregapi.code.ItemStackContainer;
-import gregapi.code.ItemStackMap;
+import gregapi.block.BlockBase;
+import gregapi.block.metatype.BlockStones;
 import gregapi.data.CS;
 import gregapi.data.CS.BlocksGT;
 import gregapi.oredict.OreDictMaterial;
@@ -16,11 +17,11 @@ import gregapi.worldgen.WorldgenObject;
 import gregapi.worldgen.WorldgenOresBedrock;
 import gregapi.worldgen.WorldgenOresLarge;
 import gregapi.worldgen.WorldgenOresSmall;
-import gregtech.blocks.stone.BlockStonesGT;
 import gregtech.worldgen.WorldgenBlackSand;
 import gregtech.worldgen.WorldgenTurf;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 public class OreHelper {
@@ -58,14 +59,13 @@ public class OreHelper {
 				mapOreLayerWrapper.add(new OreLayerWrapper(stoneLayer, oreLayer, mapOreLayerWrapper.size()));
 			}
 		}
-		for (Entry<ItemStackContainer, ItemStackMap<ItemStackContainer, List<StoneLayerOres>>> entry : StoneLayer.MAP.entrySet()) {
-			ItemStackContainer key = entry.getKey();
-			ItemStackMap<ItemStackContainer, List<StoneLayerOres>> value = entry.getValue();
-			for (Entry<ItemStackContainer, List<StoneLayerOres>> entry2 : value.entrySet()) {
-				ItemStackContainer key2 = entry2.getKey();
+		for (Entry<OreDictMaterial, Map<OreDictMaterial, List<StoneLayerOres>>> entry : StoneLayer.MAP.entrySet()) {
+			OreDictMaterial key = entry.getKey();
+			Map<OreDictMaterial, List<StoneLayerOres>> value = entry.getValue();
+			for (Entry<OreDictMaterial, List<StoneLayerOres>> entry2 : value.entrySet()) {
+				OreDictMaterial key2 = entry2.getKey();
 				for (StoneLayerOres oreLayer : entry2.getValue()) {
-					if ((key.mBlock instanceof BlockStonesGT) && (key2.mBlock instanceof BlockStonesGT))
-						mapOre2LayerWrapper.add(new Ore2LayerWrapper(key, key2, oreLayer, mapOre2LayerWrapper.size()));
+					mapOre2LayerWrapper.add(new Ore2LayerWrapper(key, key2, oreLayer, mapOre2LayerWrapper.size()));
 				}
 			}
 		}
@@ -224,12 +224,19 @@ public class OreHelper {
 			super(stoneLayer, layerOre, num);
 		}
 
-		public Ore2LayerWrapper(ItemStackContainer top, ItemStackContainer bottom, StoneLayerOres layerOre, int num) {
+		public Ore2LayerWrapper(OreDictMaterial top, OreDictMaterial bottom, StoneLayerOres layerOre, int num) {
 			super(layerOre, num);
-			this.stone = top.mBlock;
-			this.stoneMaterialName = ((BlockStonesGT) top.mBlock).mMaterial.getLocal();
-			this.stone2 = bottom.mBlock;
-			this.stone2MaterialName = ((BlockStonesGT) bottom.mBlock).mMaterial.getLocal();
+			this.stone = getBlockGT(top);
+			this.stoneMaterialName = top.getLocal();
+			this.stone2 = getBlockGT(bottom);
+			this.stone2MaterialName = bottom.getLocal();
+		}
+
+		private Block getBlockGT(OreDictMaterial material) {
+			for (BlockBase stone : BlocksGT.stones)
+				if (stone instanceof BlockStones && ((BlockStones) stone).mMaterial == material)
+					return stone;
+			return Blocks.stone;
 		}
 	}
 
