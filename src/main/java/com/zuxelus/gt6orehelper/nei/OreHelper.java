@@ -268,7 +268,7 @@ public class OreHelper {
 			world.add(getWorldNameTranslated(dim));
 		}
 	}
-	
+
 	public class BlockWrapper extends Wrapper {
 		public ItemStack block;
 		public String worldGenHeightRange;

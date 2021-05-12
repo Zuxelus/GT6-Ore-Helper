@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class OreHandler extends TemplateRecipeHandler {
+	public final static String HANDLER_ID = "gt6orehelper.worldgen";
 
 	public class CachedOreRecipe extends TemplateRecipeHandler.CachedRecipe {
 		public ArrayList<PositionedStack> input;
@@ -77,6 +78,11 @@ public class OreHandler extends TemplateRecipeHandler {
 	@Override
 	public String getRecipeName() {
 		return I18n.format("gt6orehelper.nei.worldgen.name");
+	}
+
+	@Override
+	public String getOverlayIdentifier() {
+		return HANDLER_ID;
 	}
 
 	@Override
@@ -190,20 +196,16 @@ public class OreHandler extends TemplateRecipeHandler {
 	}
 
 	@Override
-	public void drawBackground(int recipe) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GuiDraw.drawTexturedModalRect(0, 0, 5, 11, 166, 65);
-	}
+	public void drawBackground(int recipe) { }
 
 	@Override
 	public void drawForeground(int recipe) {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glDisable(2896);
-		drawExtras(recipe);
+		drawExtras_(recipe);
 	}
 
-	@Override
-	public void drawExtras(int recipe) {
+	public void drawExtras_(int recipe) {
 		CachedOreRecipe crecipe = (CachedOreRecipe) this.arecipes.get(recipe);
 		if (crecipe.type == 0) {
 			drawBedrockExtras(OreHelper.mapOreBedrockWrapper.get(crecipe.name));
