@@ -33,3 +33,6 @@ gt6orehelper.world.planets.name=Plan
 gt6orehelper.world.asteroids.name=Astr
 gt6orehelper.world.aether.name=Aeth
 gt6orehelper.world.erebus.name=Ereb
+
+gt6orehelper.config.useWaypoints=Use Waypoints
+gt6orehelper.newWaypoint=New Waypoint: %s
