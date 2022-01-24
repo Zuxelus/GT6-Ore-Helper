@@ -24,6 +24,11 @@ public class WaypointHandler {
 		if (world.isRemote)
 			return;
 
+		ItemStack tool = player.getHeldItem();
+		if (tool == null || !tool.getUnlocalizedName().equals("gt.metatool.01.62"))
+			if (!player.isSneaking())
+				return;
+
 		TileEntity te = world.getTileEntity(x, y, z);
 		if (te instanceof MultiTileEntityRock) {
 			ItemStack stack = ((MultiTileEntityRock) te).mRock;
@@ -38,8 +43,6 @@ public class WaypointHandler {
 				WaypointHandler.addWaypoint(player, te, stack.getFluid().getLocalizedName(), Color.blue);
 			return;
 		}
-		if (!player.isSneaking())
-			return;
 		Block block = world.getBlock(x, y, z);
 		if (block instanceof PrefixBlock) {
 			ItemStack stack = ((PrefixBlock) block).getItemStackFromBlock(world, x, y, z, gregapi.data.CS.SIDE_INVALID);
@@ -80,7 +83,7 @@ public class WaypointHandler {
 	}
 
 	public static void addWaypoint(EntityPlayer player, TileEntity te, int id, Color color) {
-		addWaypoint(player, te, OreDictMaterial.MATERIAL_ARRAY[id].mNameLocal, color);
+		addWaypoint(player, te, OreDictMaterial.get(id).mNameLocal, color);
 	}
 
 	public static void addWaypoint(EntityPlayer player, TileEntity te, String name, Color color) {

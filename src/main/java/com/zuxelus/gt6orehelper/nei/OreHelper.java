@@ -9,64 +9,67 @@ import java.util.Map.Entry;
 import gregapi.block.BlockBase;
 import gregapi.block.metatype.BlockStones;
 import gregapi.data.CS;
+import gregapi.data.MT;
 import gregapi.data.CS.BlocksGT;
 import gregapi.oredict.OreDictMaterial;
-import gregapi.worldgen.StoneLayer;
-import gregapi.worldgen.StoneLayerOres;
-import gregapi.worldgen.WorldgenObject;
-import gregapi.worldgen.WorldgenOresBedrock;
-import gregapi.worldgen.WorldgenOresLarge;
-import gregapi.worldgen.WorldgenOresSmall;
-import gregtech.worldgen.WorldgenBlackSand;
-import gregtech.worldgen.WorldgenTurf;
+import gregapi.util.WD;
+import gregapi.worldgen.*;
+import gregtech.blocks.stone.BlockRockOres;
+import gregtech.blocks.stone.BlockVanillaOresA;
+import gregtech.worldgen.*;
+import gregtech.worldgen.overworld.WorldgenColtan;
 import net.minecraft.block.Block;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 public class OreHelper {
 	public static HashMap<String, OreBedrockWrapper> mapOreBedrockWrapper = new HashMap<String, OreBedrockWrapper>();
 	public static HashMap<String, OreSmallWrapper> mapOreSmallWrapper = new HashMap<String, OreSmallWrapper>();
 	public static HashMap<String, OreLargeWrapper> mapOreLargeWrapper = new HashMap<String, OreLargeWrapper>();
+	public static HashMap<String, OreVanillaWrapper> mapOreVanillaWrapper = new HashMap<String, OreVanillaWrapper>();
 	public static ArrayList<OreLayerWrapper> mapOreLayerWrapper = new ArrayList<OreLayerWrapper>();
 	public static ArrayList<Ore2LayerWrapper> mapOre2LayerWrapper = new ArrayList<Ore2LayerWrapper>();
 	public static HashMap<String, BlockWrapper> mapBlockWrapper = new HashMap<String, BlockWrapper>();
+	public static HashMap<String, String> mapStackWrapper = new HashMap<String, String>();
+	public static HashMap<String, SpringWrapper> mapSpringWrapper = new HashMap<String, SpringWrapper>();
+	public static ColtanWrapper coltanWrapper;
 
 	public OreHelper() {
-		List<WorldgenObject> gen_list[] = new List[] { CS.GEN_GT, CS.GEN_NETHER, CS.GEN_END, CS.GEN_TWILIGHT,
-				CS.GEN_BETWEENLANDS, CS.GEN_MOON, CS.GEN_MARS, CS.GEN_PLANETS, CS.GEN_ASTEROIDS, CS.GEN_AETHER,
-				CS.GEN_EREBUS };
-		List<WorldgenObject> ore_list[] = new List[] { CS.ORE_NETHER, CS.ORE_END, CS.ORE_TWILIGHT, CS.ORE_BETWEENLANDS,
-				CS.ORE_MOON, CS.ORE_MARS, CS.ORE_PLANETS, CS.ORE_ASTEROIDS, CS.ORE_AETHER, CS.ORE_EREBUS };
-		int[] dim_list = { CS.DIM_OVERWORLD, CS.DIM_NETHER, CS.DIM_END, CS.DIM_TWILIGHT, CS.DIM_BETWEENLANDS,
-				CS.DIM_MOON, CS.DIM_MARS, CS.DIM_PLANETS, CS.DIM_ASTEROIDS, CS.DIM_AETHER, CS.DIM_EREBUS };
+		List<WorldgenObject> gen_list[] = new List[] { CS.GEN_AETHER, CS.GEN_ALFHEIM, CS.GEN_ASTEROIDS, CS.GEN_ATUM,
+				CS.GEN_BETWEENLANDS, CS.GEN_CW2_Caveland, CS.GEN_END, CS.GEN_EREBUS, CS.GEN_MARS, CS.GEN_MOON, CS.GEN_NETHER, CS.GEN_GT,
+				CS.GEN_PLANETS, CS.GEN_TROPICS, CS.GEN_TWILIGHT };
+		List<WorldgenObject> ore_list[] = new List[] { CS.ORE_AETHER, CS.ORE_ALFHEIM, CS.ORE_ASTEROIDS, CS.ORE_ATUM,
+				CS.ORE_BETWEENLANDS, CS.ORE_CW2_Caveland, CS.ORE_END, CS.ORE_EREBUS, CS.ORE_MARS, CS.ORE_MOON, CS.ORE_NETHER, CS.ORE_OVERWORLD,
+				CS.ORE_PLANETS, CS.ORE_TROPICS, CS.ORE_TWILIGHT };
+		int[] dim_list = { CS.DIM_AETHER, CS.DIM_ALFHEIM, CS.DIM_ASTEROIDS, CS.DIM_ATUM,
+				CS.DIM_BETWEENLANDS, CS.DIM_CW2_Caveland, CS.DIM_END, CS.DIM_EREBUS,CS.DIM_MARS,CS.DIM_MOON, CS.DIM_NETHER, CS.DIM_OVERWORLD,
+				CS.DIM_PLANETS, CS.DIM_TROPICS, CS.DIM_TWILIGHT };
 		int i = 0;
 		for (List<WorldgenObject> list : gen_list) {
-			for (WorldgenObject worldgenObject : list) {
+			for (WorldgenObject worldgenObject : list)
 				AddWrappers(worldgenObject, dim_list[i]);
-			}
 			i++;
 		}
 		i = 0;
 		for (List<WorldgenObject> list : ore_list) {
-			for (WorldgenObject worldgenObject : list) {
-				AddOreLargeWrapper(worldgenObject, dim_list[i + 1]);
-			}
+			for (WorldgenObject worldgenObject : list)
+				if (dim_list[i] != 0 || !CS.GENERATE_STONE)
+					AddOreLargeWrapper(worldgenObject, dim_list[i]);
 			i++;
 		}
 		for (StoneLayer stoneLayer : StoneLayer.LAYERS) {
-			for (StoneLayerOres oreLayer : stoneLayer.mOres) {
+			for (StoneLayerOres oreLayer : stoneLayer.mOres)
 				mapOreLayerWrapper.add(new OreLayerWrapper(stoneLayer, oreLayer, mapOreLayerWrapper.size()));
-			}
 		}
 		for (Entry<OreDictMaterial, Map<OreDictMaterial, List<StoneLayerOres>>> entry : StoneLayer.MAP.entrySet()) {
 			OreDictMaterial key = entry.getKey();
 			Map<OreDictMaterial, List<StoneLayerOres>> value = entry.getValue();
 			for (Entry<OreDictMaterial, List<StoneLayerOres>> entry2 : value.entrySet()) {
 				OreDictMaterial key2 = entry2.getKey();
-				for (StoneLayerOres oreLayer : entry2.getValue()) {
+				for (StoneLayerOres oreLayer : entry2.getValue())
 					mapOre2LayerWrapper.add(new Ore2LayerWrapper(key, key2, oreLayer, mapOre2LayerWrapper.size()));
-				}
 			}
 		}
 	}
@@ -82,26 +85,59 @@ public class OreHelper {
 				mapOreBedrockWrapper.put(
 						worldgenObject.mName + ((WorldgenOresBedrock) worldgenObject).mMaterial.mNameInternal,
 						new OreBedrockWrapper((WorldgenOresBedrock) worldgenObject, dim));
+		} else if (worldgenObject instanceof WorldgenColtan) {
+			if (coltanWrapper != null)
+				coltanWrapper.world.add(getWorldNameTranslated(dim));
+			else
+				coltanWrapper = new ColtanWrapper((WorldgenColtan) worldgenObject, dim);
 		} else if (worldgenObject instanceof WorldgenOresSmall) {
 			if (mapOreSmallWrapper.containsKey(worldgenObject.mName)) {
 				OreSmallWrapper wrapper = mapOreSmallWrapper.get(worldgenObject.mName);
 				wrapper.world.add(getWorldNameTranslated(dim));
 			} else
 				mapOreSmallWrapper.put(worldgenObject.mName, new OreSmallWrapper((WorldgenOresSmall) worldgenObject, dim));
+		} else if (worldgenObject instanceof WorldgenOresVanilla) {
+			if (mapOreVanillaWrapper.containsKey(worldgenObject.mName)) {
+				OreVanillaWrapper wrapper = mapOreVanillaWrapper.get(worldgenObject.mName);
+				wrapper.world.add(getWorldNameTranslated(dim));
+			} else
+				mapOreVanillaWrapper.put(worldgenObject.mName, new OreVanillaWrapper((WorldgenOresVanilla) worldgenObject, dim));
+		} else if (worldgenObject instanceof WorldgenFluidSpring) {
+			if (mapSpringWrapper.containsKey(worldgenObject.mName)) {
+				SpringWrapper wrapper = mapSpringWrapper.get(worldgenObject.mName);
+				wrapper.world.add(getWorldNameTranslated(dim));
+			} else
+				mapSpringWrapper.put(worldgenObject.mName, new SpringWrapper((WorldgenFluidSpring) worldgenObject, dim));
 		} else if (worldgenObject instanceof WorldgenBlackSand) {
 			if (mapBlockWrapper.containsKey(worldgenObject.mName)) {
 				BlockWrapper wrapper = mapBlockWrapper.get(worldgenObject.mName);
 				wrapper.world.add(getWorldNameTranslated(dim));
-			} else
-				mapBlockWrapper.put(worldgenObject.mName, new BlockWrapper(worldgenObject.mName, new ItemStack(BlocksGT.Sands, 1, 0) ,
+			} else {
+				ItemStack stack = new ItemStack(BlocksGT.Sands, 1, 0);
+				mapBlockWrapper.put(worldgenObject.mName, new BlockWrapper(worldgenObject.mName, new ItemStack(BlocksGT.Sands, 1, 0),
 						"48 - 63 (24 - 31 in Twilight)" , "River, Twilight Stream, ...", dim));
+				mapStackWrapper.put(stack.getUnlocalizedName(), worldgenObject.mName);
+			}
 		} else if (worldgenObject instanceof WorldgenTurf) {
 			if (mapBlockWrapper.containsKey(worldgenObject.mName)) {
 				BlockWrapper wrapper = mapBlockWrapper.get(worldgenObject.mName);
 				wrapper.world.add(getWorldNameTranslated(dim));
-			} else
-				mapBlockWrapper.put(worldgenObject.mName, new BlockWrapper(worldgenObject.mName, new ItemStack(BlocksGT.Diggables, 1, 2) ,
+			} else {
+				ItemStack stack = new ItemStack(BlocksGT.Diggables, 1, 2);
+				mapBlockWrapper.put(worldgenObject.mName, new BlockWrapper(worldgenObject.mName, stack,
 						"48 - 63 (24 - 31 in Twilight)" , "Swampland, Twilight Swamp, ...", dim));
+				mapStackWrapper.put(stack.getUnlocalizedName(), worldgenObject.mName);
+			}
+		} else if (worldgenObject instanceof WorldgenPit) {
+			if (mapBlockWrapper.containsKey(worldgenObject.mName)) {
+				BlockWrapper wrapper = mapBlockWrapper.get(worldgenObject.mName);
+				wrapper.world.add(getWorldNameTranslated(dim));
+			} else {
+				ItemStack stack = new ItemStack(((WorldgenPit) worldgenObject).mBlock, 1, ((WorldgenPit) worldgenObject).mMeta); 
+				mapBlockWrapper.put(worldgenObject.mName, new BlockWrapper(worldgenObject.mName, stack,
+					String.format("%s - %s", WD.waterLevel() - 8, WD.waterLevel() + 16) , "Plains, Savanna", dim));
+				mapStackWrapper.put(stack.getUnlocalizedName(), worldgenObject.mName);
+			}
 		}
 	}
 
@@ -118,28 +154,36 @@ public class OreHelper {
 	}
 
 	public static String getWorldNameTranslated(int dim) {
-		if (dim == CS.DIM_OVERWORLD)
-			return I18n.format("gt6orehelper.world.overworld.name");
-		if (dim == CS.DIM_NETHER)
-			return I18n.format("gt6orehelper.world.nether.name");
-		if (dim == CS.DIM_END)
-			return I18n.format("gt6orehelper.world.end.name");
-		if (dim == CS.DIM_TWILIGHT)
-			return I18n.format("gt6orehelper.world.twilight.name");
-		if (dim == CS.DIM_BETWEENLANDS)
-			return I18n.format("gt6orehelper.world.betweenlands.name");
-		if (dim == CS.DIM_MOON)
-			return I18n.format("gt6orehelper.world.moon.name");
-		if (dim == CS.DIM_MARS)
-			return I18n.format("gt6orehelper.world.mars.name");
-		if (dim == CS.DIM_PLANETS)
-			return I18n.format("gt6orehelper.world.planets.name");
-		if (dim == CS.DIM_ASTEROIDS)
-			return I18n.format("gt6orehelper.world.asteroids.name");
 		if (dim == CS.DIM_AETHER)
 			return I18n.format("gt6orehelper.world.aether.name");
+		if (dim == CS.DIM_ALFHEIM)
+			return I18n.format("gt6orehelper.world.alfheim.name");
+		if (dim == CS.DIM_ASTEROIDS)
+			return I18n.format("gt6orehelper.world.asteroids.name");
+		if (dim == CS.DIM_ATUM)
+			return I18n.format("gt6orehelper.world.atum.name");
+		if (dim == CS.DIM_BETWEENLANDS)
+			return I18n.format("gt6orehelper.world.betweenlands.name");
+		if (dim == CS.DIM_CW2_Caveland)
+			return I18n.format("gt6orehelper.world.cw2.name");
+		if (dim == CS.DIM_END)
+			return I18n.format("gt6orehelper.world.end.name");
 		if (dim == CS.DIM_EREBUS)
-			return I18n.format("gt6orehelper.world.erebus.name");		
+			return I18n.format("gt6orehelper.world.erebus.name");
+		if (dim == CS.DIM_MARS)
+			return I18n.format("gt6orehelper.world.mars.name");
+		if (dim == CS.DIM_MOON)
+			return I18n.format("gt6orehelper.world.moon.name");
+		if (dim == CS.DIM_NETHER)
+			return I18n.format("gt6orehelper.world.nether.name");
+		if (dim == CS.DIM_OVERWORLD)
+			return I18n.format("gt6orehelper.world.overworld.name");
+		if (dim == CS.DIM_PLANETS)
+			return I18n.format("gt6orehelper.world.planets.name");
+		if (dim == CS.DIM_TROPICS)
+			return I18n.format("gt6orehelper.world.tropics.name");
+		if (dim == CS.DIM_TWILIGHT)
+			return I18n.format("gt6orehelper.world.twilight.name");
 		return "";
 	}
 
@@ -187,6 +231,35 @@ public class OreHelper {
 			this.materialName = worldgen.mMaterial.getLocal();
 			this.worldGenHeightRange = worldgen.mMinY + "-" + worldgen.mMaxY;
 			this.amountPerChunk = "1-" + worldgen.mAmount;
+			this.world = new ArrayList<String>();
+			world.add(getWorldNameTranslated(dim));
+		}
+	}
+
+	public class OreVanillaWrapper extends Wrapper {
+		public ItemStack block;
+		public String worldGenHeightRange;
+		public int size;
+		public int amount;
+		public int probability;
+		public String biomes;
+
+		public OreVanillaWrapper(WorldgenOresVanilla worldgen, int dim) {
+			this.name = worldgen.mName;
+			this.block = new ItemStack(worldgen.mBlock, 1, worldgen.mBlockMeta);
+			if (worldgen.mBlock instanceof BlockVanillaOresA) {
+				this.material = BlockVanillaOresA.ORE_MATERIALS[worldgen.mBlockMeta];
+				this.materialName = this.material.getLocal();
+			}
+			if (worldgen.mBlock instanceof BlockRockOres) {
+				this.material = BlockRockOres.ORE_MATERIALS[worldgen.mBlockMeta];
+				this.materialName = this.material.getLocal();
+			}
+			this.worldGenHeightRange = worldgen.mMinY + "-" + worldgen.mMaxY;
+			this.size = worldgen.mSize;
+			this.amount = worldgen.mAmount;
+			this.probability = worldgen.mProbability;
+			this.biomes = worldgen.mBiomeList != null  ? worldgen.mBiomeList.iterator().next() : "";
 			this.world = new ArrayList<String>();
 			world.add(getWorldNameTranslated(dim));
 		}
@@ -279,6 +352,32 @@ public class OreHelper {
 			this.block = mStack;
 			this.worldGenHeightRange = worldGenHeightRange;
 			this.biomes = mBiomes;
+			this.world = new ArrayList<String>();
+			world.add(getWorldNameTranslated(dim));
+		}
+	}
+
+	public class SpringWrapper extends Wrapper {
+		public ItemStack block;
+		public final FluidStack springFluid;
+		public int probability;
+
+		public SpringWrapper(WorldgenFluidSpring worldgen, int dim) {
+			this.name = worldgen.mName;
+			this.block = new ItemStack(worldgen.mBlock, 1, worldgen.mMeta);
+			this.springFluid = worldgen.mSpringFluid;
+			this.probability = worldgen.mProbability;
+			this.world = new ArrayList<String>();
+			world.add(getWorldNameTranslated(dim));
+		}
+	}
+
+	public class ColtanWrapper extends Wrapper {
+
+		public ColtanWrapper(WorldgenColtan worldgen, int dim) {
+			this.name = worldgen.mName;
+			this.material = MT.OREMATS.Coltan;
+			this.materialName = MT.OREMATS.Coltan.getLocal();
 			this.world = new ArrayList<String>();
 			world.add(getWorldNameTranslated(dim));
 		}
